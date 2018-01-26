@@ -10,6 +10,7 @@
 
   let player;
   let cursors;
+  let playerBullets;
   // Core game methods
   function preload() {
     game.load.spritesheet(GFX, `../assets/shmup-spritesheet-140x56-28x28-tile.png`, 28, 28);
@@ -17,12 +18,17 @@
 
   function create() {
     cursors = game.input.keyboard.createCursorKeys();
+    cursors.fire = game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR);
+    cursors.fire.onUp.add( handlePlayerFire );
+
     player = game.add.sprite(100, 100, GFX, 8);
     player.moveSpeed = INITIAL_MOVESPEED;
+    playerBullets = game.add.group();
   }
 
   function update() {
     handlePlayerMovement();
+
   }
 
   //handler function
@@ -51,7 +57,11 @@
       case cursors.up.isDown:
         player.y -= player.moveSpeed * movingH;
         break;
-    }
+    } 
   };
+
+  function handlePlayerFire() {
+    console.log(`fire`);
+  }
 
 })(window.Phaser);
