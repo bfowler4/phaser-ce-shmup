@@ -6,12 +6,17 @@
   const INITIAL_MOVESPEED = 4;
   const SQRT_TWO = Math.sqrt(2);
   const PLAYER_BULLET_SPEED = 6;
+  const ENEMY_SPAWN_FREQ = 100; // higher is less frequent
+  const ENEMY_SPEED = 4.5;
+
+  const randomGenerator = new Phaser.RandomDataGenerator();
 
   const game = new Phaser.Game(GAME_WIDTH, GAME_HEIGHT, Phaser.AUTO, GAME_CONTAINER_ID, { preload, create, update });
 
   let player;
   let cursors;
   let playerBullets;
+  let enemies;
   // Core game methods
   function preload() {
     game.load.spritesheet(GFX, `../assets/shmup-spritesheet-140x56-28x28-tile.png`, 28, 28);
@@ -25,11 +30,15 @@
     player = game.add.sprite(100, 100, GFX, 8);
     player.moveSpeed = INITIAL_MOVESPEED;
     playerBullets = game.add.group();
+    enemies = game.add.group();
   }
 
   function update() {
     handlePlayerMovement();
     handleBulletAnimations();
+    randomlySpawnEnemy();
+    handleEnemyActions();
+
     cleanup();
   }
 
@@ -68,6 +77,18 @@
 
   function handleBulletAnimations() {
     playerBullets.children.forEach( bullet => bullet.y -= PLAYER_BULLET_SPEED);
+  }
+
+  function handleEnemyActions() {
+    enemies.children.forEach( enemy => enemy.y += ENEMY_SPEED );
+  };
+
+  // Behavioral functions
+  function randomlySpawnEnemy() {
+    if(randomGenerator.between(0, ENEMY_SPAWN_FREQ) === 0) {
+      let randomX = randomGenerator.between(0, GAME_WIDTH);
+      enemies.add( game.add.sprite(randomX, -24, GFX, 0));
+    }
   }
 
   // Utlity functions
