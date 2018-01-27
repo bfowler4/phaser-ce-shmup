@@ -85,25 +85,19 @@
   };
 
   function handleCollisions() {
-    // check if any bullets touch any enemies
+    enemies.children.filter((enemy) => {
+      return enemy.alive;
+    }).forEach((enemy) => {
+      for (bullet of playerBullets.children) {
+        if (bullet.overlap(enemy)) {
+          destroyEnemy(enemy);
+          removeBullet(bullet);
+          break;
+        }
+      }
+    });
+
     let enemiesHit = enemies.children
-      .filter(enemy => enemy.alive)
-      .filter(enemy =>
-        playerBullets.children.some(
-          bullet => enemy.overlap(bullet)
-        )
-      );
-
-    if (enemiesHit.length) {
-      // clean up bullets that land
-      playerBullets.children
-        .filter(bullet => bullet.overlap(enemies))
-        .forEach(removeBullet);
-
-      enemiesHit.forEach(destroyEnemy);
-    }
-
-    enemiesHit = enemies.children
       .filter(enemy => enemy.overlap(player));
 
     if (enemiesHit.length) {
